@@ -121,7 +121,47 @@ EX) 온라인 쇼핑몰의 상품조회, 구매, 결제, 배송 등
 - 팩토리로 다른 애그리거트에서 사용하면 서비스에서 중요로직이 노출되지 않아도 되며, 유지보수 시 팩토리 클래스만 변경하면 되고, 응용 서비스는 영향을 받지 않는다
 
 # Chapter4. 리포지터리와 모델 구현 - JPA로 설명
-### 4.1 JPA를 이용한 리포지터리 구현(130~135
+### 4.1 JPA를 이용한 리포지터리 구현(130~135p)
 - 인터페이스는 도메인영역에 속하고, 구현한 리포지토리는 인프라스트럭처 영역에 속한다
 - 스프링 데이터 JPA 를 사용하면 기본적인 저장, 조회, 삭제 등은 기본제공해준다.
 - Update 기능은 따로 생성하지 않는다. JPA는 트랜잭션 안에서 변경한 데이터는 자동으로 DB에 저장한다.
+
+### 4.2 스프링 데이터 JPA를 이용한 리포지터리 구현(136~138p)
+- 스프링 데이터 JPA 에서 지정한 규칙에 맞는 인터페이스를 정의하면 리포지터리를 구현한 객체를 알아서 만들어서 스프링 빈으로 등록해준다.
+- extends JpaRepository(T타입, ID) 를 사용해 리포지토리 인터페이스에 상속한다.
+
+### 4.3 매핑구현(139~161p)
+- 애그리거트 루트는 엔티티이므로 @Entity 로 매핑한다.
+- 밸류 타입은 @Embeddable로 매핑하며 밸류 타입의 프로퍼티는 @Embedded로 매핑한다.
+- 기본생성자는 필수로 제공해야 한다. 다른 코드에서 생성하지 못하도록 최소한의 범위인 Protected 로 제한한다.
+``` 
+@Entity
+public class Order {
+  @Embedded
+  private ShippingInfo shippinginfo;
+}
+
+@Embeddable
+public class ShippingInfo {
+  @Embedded
+  private Address address;
+}
+```
+- set 메서드는 지양한다. 캡슐화를 깨는 원인이다.
+- 밸류 매핑처리는 AttributeConverter 인터페이스를 구현해 해결할 수 있다. ex) 밸류 객체 -> JSON 으로 DB 에 저장해야할 때
+- JPA 에서 식별자 타입은 Serializable 타입이어야 하므로, 식별자로 사용할 밸류 타입은 Serializable 인터페이스를 상속받아야 한다.
+```
+식별자를 밸류 타입으로 만들 수도 있다.
+@Entity
+public class Order {
+  @EmbeddedId
+  private OrderNo number;
+  ...
+}
+
+@Embeddable
+public class OrderNo implements Serializable {
+  private String number;
+}
+```
+### 4.4 에그리거트 로딩 
