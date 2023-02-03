@@ -188,6 +188,37 @@ public class OrderNo implements Serializable {
 - 검색 조건이 다양하게 되면 스펙(Specification) 을 사용하지만, 해당 책에서는 스프링 데이터 JPA 를 사용.
 - 이후 진행 예정.
 
-### 5.6 정렬 지정하기 (185~
+### 5.6 정렬 지정하기 (185~186p)
+- 스프링데이터 JPA 에서는 두 가지 방법으로 정렬을 지정할 수 있다.<br>
+  1. 메서드 이름이 OrderBy를 사용해서 정렬 기준 지정<br>
+  2. Sort를 인자로 전달
+```
+List<Product> findByProductNameOrderByProductId(String productName)
+List<Product> findByProductName(String productName, Sort sort)
+```
+
+### 5.7 페이징 처리하기 (187~189p)
+- JPA 를 이용하면 페이징 처리를 간단히 구현할 수 있다.
+```
+List<Product> findAll(Pageable pageable);
+PageRequest pageReq = PageRequest.of(1,10);
+(페이지번호, 페이지크기)
+```
+- 메서드의 리턴타입이 Page일 경우 COUNT(데이터개수) 를 같이 구한다.
+
+### 5.8 스펙 조합을 위한 스펙 빌더 클래스 (190~192p)
+- if 조건문이 많을 때 SpecBuilder 클래스를 이용하면 깔끔하게 구현할 수 있다. -> 필요할 때 검색해보기
+
+### 5.9 동적 인스턴스 생성 (193~194p)
+- JPA는 객체를 동적으로 생성할 수 있다.
+- Dto 클래스로 반환을 받고 싶으면 new 오퍼레이션을 이용해야 한다.
+```
+@Query("select new com.myshop.---.---.dto.memberdto") - 예시
+```
+
+### 5.10 하이버네이트 @Subselect 사용(195~198p)
+- 쿼리 결과를 @Entity로 매핑할 수 있는 기능 -> 필요할 때 검색해보기
+
+# Chapter6. 응용 서비스와 표현 영역
 
 
