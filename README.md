@@ -247,6 +247,49 @@ PageRequest pageReq = PageRequest.of(1,10);
   2. 요청을 알맞은 응용 서비스에 전달하고 결과를 사용자에게 제공
   3. 세션 관리
   
+### 6.5 값 검증(221~226p)
+- 값 검증은 보통 서비스 레이어에서 처리한다. 
+- 논리적인 검증 또한 서비스 레이어에서 처리한다.
+
+### 6.6 권한검사(227~230p)
+- 스프링 시큐리티와 같은 프레임워크를 사용해서 권한에 대한 관리를 유연하고 확장 가능한 형태로 관리한다.
+- 컨트롤러에서 서블릿 필터를 이용해서 접근할 수 있는 권한을 설정할 수 있다.
+```
+@GetMapping("/admin/members") 
+@PreAuthorize("hasAnyRole('ADMIN')") 
+@ResponseStatus(HttpStatus.OK)
+public List<MemberResponse> memberFindAll() {
+    return memberService.findAll();
+}
+```
+
+### 6.7 조회 전용 기능과 응용 서비스(231~232p)
+- 조회 전용 서비스에서는 트랜잭션을 사용하지 않아도 된다.
+
+# Chapter7. 도메인 서비스
+### 7.1 여러 애그리거트가 필요한 기능(234~236p)
+- 결제 금액 계산 로직처럼 애러 애그리거트가 필요한 경우에는 상품,주문,할인 등 어느 도메인에 로직을 넣을지 복잡한 경우가 있다.<br>
+  어느 한 곳에 억지로 넣게되면 도메인의 책임을 벗어나기 때문에 복잡하고 수정이 어렵게 만든다.<br>
+  -> 도메인 기능을 별도 서비스로 구현하는 방법을 검토하는 것이 좋다.
+
+### 7.2 도메인 서비스(237~243p)
+- 도메인 서비스는 여러 애그리거트가 필요한 계산로직 이나, 외부 시스템 연동이 필요한 로직에 사용한다.
+- 도메인 서비스를 따로 만들고, 필요한 애그리거트에서 사용하도록 설계한다.
+```
+// 도메인 서비스 
+public class DiscountCalculationService { 
+... 
+}
+
+//사용
+public class OrderService {
+  private DiscountCalculationService discountCalculationService;
+  ...
+}
+```
+- 특정 기능이 애그리거트의 상태를 변경하거나 계산한다면 도메인 로직으로 판단한다.
+
+
 
 
 
